@@ -32,6 +32,8 @@ jobs:
       - id: find-layers
         run: |
           if [ "${{ steps.get-version.outputs.VERSION }}" = "" ]; then
+            git describe --tags --abbrev=0
+            git diff --name-only HEAD $(git describe --tags --abbrev=0)
             echo "::set-output name=list::$(git diff --name-only HEAD $(git describe --tags --abbrev=0) | grep layers/ | cut -d / -f 2  | sort | uniq | jq -R -s -c 'split("\n")[:-1]')"
           else
             echo "::set-output name=list::$(ls layers | jq -R -s -c 'split("\n")[:-1]')"
